@@ -17,7 +17,7 @@ normal_setting = (
     "학생들에게 항상 친절하고 현대적인 말투로 격려하며, 명확하고 이해하기 쉽게 답변해줘. "
     "모든 답변은 반드시 3문장 이내로 간결하게 대답해."
 )
-model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=normal_setting)
+model = genai.GenerativeModel(model_name="gemini-3.1-flash-lite", system_instruction=normal_setting)
 
 @app.route('/')
 def home():
