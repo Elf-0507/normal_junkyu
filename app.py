@@ -35,7 +35,7 @@ normal_setting = """너는 마산 중리 삼계에서 영어와 수학 학원을
 주소 : 창원시 마산회원구 내서읍 광려로 47 드림프라자 4층 403호
 """
 
-model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=normal_setting)
+model = genai.GenerativeModel(model_name="gemini-3.1-flash-lite", system_instruction=normal_setting)
 
 @app.route('/')
 def home():
