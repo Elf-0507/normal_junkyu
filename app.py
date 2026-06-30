@@ -1,15 +1,17 @@
-import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
 import os
+import datetime # 대화 시간을 기록하기 위한 모듈
 
 app = Flask(__name__)
 CORS(app)
 
+# 🔑 레일웨이에서 입력한 구글 API 키 불러오기
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
+# 다정하고 전문적인 박원장님 페르소나 설정 (내용 업데이트 완료)
 normal_setting = """너는 마산 중리 삼계에서 영어와 수학 학원을 운영하는 다정하고 전문적인 박준규 원장이야. 
 학생들에게 항상 친절하고 현대적인 말투로 격려하며, 명확하고 이해하기 쉽게 답변해줘. 
 모든 답변은 반드시 3문장 이내로 간결하게 대답해.
@@ -32,7 +34,8 @@ normal_setting = """너는 마산 중리 삼계에서 영어와 수학 학원을
 [학원 위치 정보]
 주소 : 창원시 마산회원구 내서읍 광려로 47 드림프라자 4층 403호
 """
-model = genai.GenerativeModel(model_name="gemini-3.1-flash-lite", system_instruction=normal_setting)
+
+model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=normal_setting)
 
 @app.route('/')
 def home():
@@ -44,12 +47,19 @@ def home():
 def chat():
     data = request.get_json()
     user_message = data.get("message", "")
+    
+    # 1. 사용자의 질문을 서버 로그에 출력
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"\n[🧑‍🎓 학생 | {now}] {user_message}", flush=True)
+
     try:
-        print(f"[🤖 원장님 | {now}] {response.text}\n", flush=True)
         response = model.generate_content(user_message)
+        
+        # 2. 챗봇의 답변을 서버 로그에 출력
+        print(f"[🤖 원장님 | {now}] {response.text}\n", flush=True)
+        
         return jsonify({"reply": response.text})
     except Exception as e:
+        # 오류 발생 시 로그에 출력
         print(f"🔥 오류 발생: {str(e)}", flush=True)
         return jsonify({"reply": f"오류가 발생했습니다: {str(e)}"})
