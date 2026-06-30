@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
@@ -43,8 +44,12 @@ def home():
 def chat():
     data = request.get_json()
     user_message = data.get("message", "")
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"\n[🧑‍🎓 학생 | {now}] {user_message}", flush=True)
     try:
+        print(f"[🤖 원장님 | {now}] {response.text}\n", flush=True)
         response = model.generate_content(user_message)
         return jsonify({"reply": response.text})
     except Exception as e:
+        print(f"🔥 오류 발생: {str(e)}", flush=True)
         return jsonify({"reply": f"오류가 발생했습니다: {str(e)}"})
